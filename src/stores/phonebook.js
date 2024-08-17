@@ -6,20 +6,24 @@ export const usePhoneBookStore = defineStore("phonebook", () => {
   const phonebooks = ref([]);
   const total = ref(0);
 
-  async function loadPhoneBook(sort, keyword, limit) {
+  async function loadPhoneBook(sort, keyword, page) {
     try {
       const { data } = await api.get(
         `graphql?query={phonebooks(sort:${sort ? -1 : 1},keyword:${
           keyword ? `"${keyword}"` : `""`
-        },limit:${limit}){id,name,phone,avatar}}`
+        },limit:42,page:${page}){id,name,phone,avatar}}`
       );
-      phonebooks.value = data.data.phonebooks;
+      if (page === 1) {
+        phonebooks.value = data.data.phonebooks;
+      } else if (page !== 1) {
+        phonebooks.value = phonebooks.value.concat(data.data.phonebooks);
+      }
       const totalData = await api.get(
         `graphql?query={phonebooks(sort:${sort ? -1 : 1},keyword:${
           keyword ? `"${keyword}"` : `""`
         },limit:null){id,name,phone,avatar}}`
       );
-      total.value = totalData.data.data.phonebooks.length;
+      total.value = Math.ceil(totalData.data.data.phonebooks.length / 42);
     } catch (error) {
       console.log(error);
     }

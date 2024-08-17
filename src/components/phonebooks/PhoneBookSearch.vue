@@ -8,7 +8,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 defineProps({
   sort: { type: Boolean, required: true },
-  limit: { type: Number, required: true },
 });
 </script>
 

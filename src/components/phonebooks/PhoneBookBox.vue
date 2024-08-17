@@ -9,33 +9,36 @@ const phonebookStore = usePhoneBookStore();
 
 const sort = ref(false);
 const search = ref("");
-const limit = ref(42);
+const page = ref(1);
 
 const onScroll = () => {
   window.onscroll = () => {
     if (
-      limit.value < phonebookStore.total &&
+      page.value < phonebookStore.total &&
       window.scrollY + window.innerHeight ===
         document.documentElement.scrollHeight
     ) {
-      limit.value += 10;
-      phonebookStore.loadPhoneBook(sort.value, search.value, limit.value);
+      page.value += 1;
+      phonebookStore.loadPhoneBook(sort.value, search.value, page.value);
     }
   };
 };
 
 const changeSearch = (data) => {
   search.value = data;
-  phonebookStore.loadPhoneBook(sort.value, search.value, limit.value);
+  page.value = 1;
+  phonebookStore.loadPhoneBook(sort.value, search.value, page.value);
 };
 
 const changeSort = (data) => {
   sort.value = !data;
-  phonebookStore.loadPhoneBook(sort.value, search.value, limit.value);
+  page.value = 1;
+  document.documentElement.scrollTop = 0;
+  phonebookStore.loadPhoneBook(sort.value, search.value, page.value);
 };
 
 onMounted(() => {
-  phonebookStore.loadPhoneBook(sort.value, search.value, limit.value);
+  phonebookStore.loadPhoneBook(sort.value, search.value, page.value);
   onScroll();
 });
 </script>
@@ -44,7 +47,6 @@ onMounted(() => {
   <section>
     <PhoneBookSearch
       :sort="sort"
-      :limit="limit"
       @change-search="changeSearch"
       @change-Sort="changeSort"
     />

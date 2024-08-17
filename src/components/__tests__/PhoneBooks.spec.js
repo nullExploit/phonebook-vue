@@ -137,13 +137,11 @@ describe("PhoneBooks", () => {
     const data = mount(PhoneBookSearch, {
       props: {
         sort: false,
-        limit: 0,
       },
     });
 
     expect(data.html()).toMatchSnapshot();
     expect(data.props().sort).toBe(false);
-    expect(data.props().limit).toBe(0);
     expect(
       data
         .get(".sorting-button")

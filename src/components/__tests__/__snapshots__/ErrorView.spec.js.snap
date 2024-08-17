@@ -1,0 +1,6 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Error page > Should return error page 1`] = `
+"<h1 style="text-align: center; margin-top: 2rem;">Error 404</h1>
+<p style="text-align: center;">not found</p>"
+`;

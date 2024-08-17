@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import PhoneBookBox from "@/components/phonebooks/PhoneBookBox.vue";
+import ErrorView from "@/views/ErrorView.vue";
+import PhoneBookView from "@/views/PhoneBookView.vue";
 import PhoneBookAddView from "@/views/PhoneBookAddView.vue";
 
 const router = createRouter({
@@ -8,16 +9,14 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
-      component: PhoneBookBox,
+      component: PhoneBookView,
     },
     {
       path: "/add",
       name: "add",
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: PhoneBookAddView,
     },
+    { path: "/:pathMatch(.*)*", component: ErrorView },
   ],
 });
 
