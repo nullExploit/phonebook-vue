@@ -11,19 +11,14 @@ export const usePhoneBookStore = defineStore("phonebook", () => {
       const { data } = await api.get(
         `graphql?query={phonebooks(sort:${sort ? -1 : 1},keyword:${
           keyword ? `"${keyword}"` : `""`
-        },limit:42,page:${page}){id,name,phone,avatar}}`
+        },limit:42,page:${page}){id,name,phone,avatar}totalphonebook(keyword:"${keyword}")}`
       );
       if (page === 1) {
         phonebooks.value = data.data.phonebooks;
       } else if (page !== 1) {
         phonebooks.value = phonebooks.value.concat(data.data.phonebooks);
       }
-      const totalData = await api.get(
-        `graphql?query={phonebooks(sort:${sort ? -1 : 1},keyword:${
-          keyword ? `"${keyword}"` : `""`
-        },limit:null){id,name,phone,avatar}}`
-      );
-      total.value = Math.ceil(totalData.data.data.phonebooks.length / 42);
+      total.value = Math.ceil(data.data.totalphonebook / 42);
     } catch (error) {
       console.log(error);
     }
@@ -53,13 +48,6 @@ export const usePhoneBookStore = defineStore("phonebook", () => {
 
   async function updatePhoneBook(id, name, phone) {
     try {
-      phonebooks.value = phonebooks.value.map((item) => {
-        if (item.id === id) {
-          item.name = name;
-          item.phone = phone;
-        }
-        return item;
-      });
       const query =
         "mutation updatePhoneBook ($id: String!, $name: String!, $phone: String!) {updatephonebook (id: $id, name: $name, phone: $phone) {id}}";
       const variables = {
@@ -68,6 +56,13 @@ export const usePhoneBookStore = defineStore("phonebook", () => {
         phone,
       };
       await api.post("graphql", { query, variables });
+      phonebooks.value = phonebooks.value.map((item) => {
+        if (item.id === id) {
+          item.name = name;
+          item.phone = phone;
+        }
+        return item;
+      });
     } catch (error) {
       console.log(error);
     }
@@ -75,13 +70,13 @@ export const usePhoneBookStore = defineStore("phonebook", () => {
 
   async function removePhoneBook(id) {
     try {
-      phonebooks.value = phonebooks.value.filter((item) => item.id !== id);
       const query =
         "mutation removePhoneBook ($id: String!) {removephonebook (id: $id) {id}}";
       const variables = {
         id,
       };
       await api.post("graphql", { query, variables });
+      phonebooks.value = phonebooks.value.filter((item) => item.id !== id);
     } catch (error) {
       console.log(error);
     }
